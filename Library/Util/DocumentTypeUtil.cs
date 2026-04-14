@@ -2,7 +2,7 @@ namespace Library.Util;
 
 /// <summary>
 /// Identifies the type of document being submitted for analysis.
-/// Each type maps to a distinct prompt template in <c>PromptsBLL</c>.
+/// Each type maps to a distinct prompt template in <see cref="Library.BLL.PromptsBLL"/>.
 /// </summary>
 public enum DocumentType
 {

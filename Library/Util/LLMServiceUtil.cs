@@ -55,7 +55,10 @@ public class LLMServiceUtil
         };
 
         var completion = await chatClient.CompleteChatAsync(messages);
-        return completion.Value.Content[0].Text;
+        var text = completion.Value.Content.FirstOrDefault()?.Text;
+        if (string.IsNullOrWhiteSpace(text))
+            throw new InvalidOperationException("The model returned an empty response.");
+        return text;
     }
 
     /// <summary>
@@ -73,6 +76,7 @@ public class LLMServiceUtil
         {
             model = RealtimeModel,
             modalities = new[] { "text" },
+            // userName is JSON-serialized and transport-safe; prompt injection risk is accepted for this demo scope
             instructions = $"You are a helpful assistant. The user's name is {userName}."
         };
 
@@ -104,12 +108,19 @@ public class LLMServiceUtil
         await vectorStoreClient.AddFileToVectorStoreAsync(vectorStoreId, uploadedFile.Value.Id);
 
         // Retain only the most recently uploaded file — delete all older ones
-        await foreach (var vsFile in vectorStoreClient.GetVectorStoreFilesAsync(vectorStoreId, (VectorStoreFileCollectionOptions?)null))
+        await foreach (var vsFile in vectorStoreClient.GetVectorStoreFilesAsync(vectorStoreId))
         {
             if (vsFile.FileId != uploadedFile.Value.Id)
             {
-                await vectorStoreClient.RemoveFileFromVectorStoreAsync(vectorStoreId, vsFile.FileId);
-                await fileClient.DeleteFileAsync(vsFile.FileId);
+                try
+                {
+                    await vectorStoreClient.RemoveFileFromVectorStoreAsync(vectorStoreId, vsFile.FileId);
+                    await fileClient.DeleteFileAsync(vsFile.FileId);
+                }
+                catch
+                {
+                    // Cleanup is best-effort; the newly uploaded file is already live in the vector store
+                }
             }
         }
     }
