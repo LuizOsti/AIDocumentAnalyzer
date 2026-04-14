@@ -1,6 +1,8 @@
 using Library.BLL;
 using Library.DTO;
+using Library.Util;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AIDocumentAnalyzer.Controllers;
 
@@ -49,16 +51,16 @@ public class KnowledgeBaseController : BaseController
             _authBll.Validate(token);
 
             if (file is null || file.Length == 0)
-                throw new Library.Util.AppExceptionUtil(
+                throw new AppExceptionUtil(
                     "No file was provided.",
-                    System.Net.HttpStatusCode.BadRequest,
+                    HttpStatusCode.BadRequest,
                     nameof(file));
 
             using var stream = file.OpenReadStream();
             await _knowledgeBaseBll.UpdateAsync(stream, file.FileName);
             response.Finalize("File uploaded successfully.");
         }
-        catch (Library.Util.AppExceptionUtil ex)
+        catch (AppExceptionUtil ex)
         {
             response.FinalizeError(ex);
         }

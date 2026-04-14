@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
 
 builder.Services.AddSingleton<LLMServiceUtil>();
-builder.Services.AddScoped<AuthBLL>();
+builder.Services.AddSingleton<AuthBLL>();
 builder.Services.AddScoped<AnalyzerBLL>();
 builder.Services.AddScoped<ChatBLL>();
 builder.Services.AddScoped<KnowledgeBaseBLL>();

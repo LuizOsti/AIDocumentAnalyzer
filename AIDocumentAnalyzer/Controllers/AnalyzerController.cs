@@ -1,5 +1,6 @@
 using Library.BLL;
 using Library.DTO;
+using Library.Util;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AIDocumentAnalyzer.Controllers;
@@ -48,7 +49,7 @@ public class AnalyzerController : BaseController
             var result = await _analyzerBll.AnalyzeAsync(request);
             response.Finalize(result);
         }
-        catch (Library.Util.AppExceptionUtil ex)
+        catch (AppExceptionUtil ex)
         {
             response.FinalizeError(ex);
         }

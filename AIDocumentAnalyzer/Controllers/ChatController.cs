@@ -1,6 +1,8 @@
 using Library.BLL;
 using Library.DTO;
+using Library.Util;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AIDocumentAnalyzer.Controllers;
 
@@ -45,10 +47,14 @@ public class ChatController : BaseController
         try
         {
             _authBll.Validate(token);
+
+            if (string.IsNullOrWhiteSpace(user))
+                throw new AppExceptionUtil("The 'user' query parameter is required.", HttpStatusCode.BadRequest, nameof(user));
+
             var clientSecret = await _chatBll.StartSessionAsync(user);
             response.Finalize(clientSecret);
         }
-        catch (Library.Util.AppExceptionUtil ex)
+        catch (AppExceptionUtil ex)
         {
             response.FinalizeError(ex);
         }
