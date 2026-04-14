@@ -36,9 +36,19 @@ public class AnalyzerBLL
 
         var rawResponse = await _llmService.CompleteAsync(systemPrompt, serializedContent);
 
+        // Strip markdown code fences that the model occasionally adds despite explicit instructions
+        var cleaned = rawResponse.Trim();
+        if (cleaned.StartsWith("```"))
+        {
+            var firstNewline = cleaned.IndexOf('\n');
+            if (firstNewline >= 0) cleaned = cleaned[(firstNewline + 1)..];
+            var lastFence = cleaned.LastIndexOf("```");
+            if (lastFence >= 0) cleaned = cleaned[..lastFence].Trim();
+        }
+
         try
         {
-            var result = JsonConvert.DeserializeObject<AnalysisResultDTO>(rawResponse);
+            var result = JsonConvert.DeserializeObject<AnalysisResultDTO>(cleaned);
 
             if (result is null)
                 throw new AppExceptionUtil(
@@ -50,7 +60,8 @@ public class AnalyzerBLL
         catch (JsonException ex)
         {
             throw new AppExceptionUtil(
-                $"Failed to parse the model response as a valid analysis result: {ex.Message}",
+                $"Failed to parse the model response as a valid analysis result. " +
+                $"Parser error: {ex.Message}. Raw response (first 500 chars): {rawResponse[..Math.Min(500, rawResponse.Length)]}",
                 HttpStatusCode.InternalServerError);
         }
     }

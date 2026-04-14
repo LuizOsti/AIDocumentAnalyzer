@@ -10,6 +10,7 @@ public static class PromptsBLL
 {
     private const string JsonStructureInstruction =
         """
+        Base your analysis strictly on the data provided. Do not invent facts, names, or figures not present in the input.
         Return ONLY a valid JSON object with no markdown, no code fences, and no extra text.
         Use this exact structure:
         {

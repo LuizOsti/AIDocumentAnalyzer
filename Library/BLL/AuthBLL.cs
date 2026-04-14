@@ -9,15 +9,16 @@ namespace Library.BLL;
 /// </summary>
 public class AuthBLL
 {
-    private readonly IConfiguration _configuration;
+    private readonly IReadOnlyList<string> _validTokens;
 
     /// <summary>
-    /// Initializes <see cref="AuthBLL"/> with application configuration.
+    /// Initializes <see cref="AuthBLL"/> with application configuration;
+    /// reads Auth:ValidTokens once at startup.
     /// </summary>
-    /// <param name="configuration">Application configuration (reads Auth:ValidTokens).</param>
+    /// <param name="configuration">Application configuration (reads Auth:ValidTokens once at startup).</param>
     public AuthBLL(IConfiguration configuration)
     {
-        _configuration = configuration;
+        _validTokens = configuration.GetSection("Auth:ValidTokens").Get<string[]>() ?? [];
     }
 
     /// <summary>
@@ -30,9 +31,9 @@ public class AuthBLL
         if (string.IsNullOrWhiteSpace(token))
             throw new AppExceptionUtil("Invalid or missing token.", HttpStatusCode.Unauthorized);
 
-        var validTokens = _configuration.GetSection("Auth:ValidTokens").Get<string[]>() ?? [];
-
-        if (!validTokens.Contains(token, StringComparer.OrdinalIgnoreCase))
+        // Note: OrdinalIgnoreCase comparison is not constant-time. Acceptable for a portfolio
+        // demo API — production use should replace with CryptographicOperations.FixedTimeEquals.
+        if (!_validTokens.Contains(token, StringComparer.OrdinalIgnoreCase))
             throw new AppExceptionUtil("Invalid or missing token.", HttpStatusCode.Unauthorized);
     }
 }
