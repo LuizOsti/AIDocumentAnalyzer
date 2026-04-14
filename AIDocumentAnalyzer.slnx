@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="AIDocumentAnalyzer/AIDocumentAnalyzer.csproj" />
+  <Project Path="Library/Library.csproj" />
+</Solution>
