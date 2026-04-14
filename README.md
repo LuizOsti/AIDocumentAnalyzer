@@ -108,7 +108,8 @@ AIDocumentAnalyzer/
    dotnet run --project AIDocumentAnalyzer/AIDocumentAnalyzer.csproj
    ```
 
-5. Open Swagger UI at `https://localhost:5001/swagger`
+5. Open Swagger UI at `https://localhost:7060/swagger`
+   (the port is printed in the terminal when you run the API; default HTTPS port is `7060`, HTTP is `5207`)
 
 ---
 

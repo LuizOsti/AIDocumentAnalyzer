@@ -34,6 +34,7 @@ public class KnowledgeBaseController : BaseController
     /// <response code="400">No file was provided.</response>
     /// <response code="401">Token is invalid or missing.</response>
     /// <response code="500">An unexpected error occurred.</response>
+    [Consumes("multipart/form-data")]
     [HttpPost("update")]
     [ProducesResponseType(typeof(ResponseDTO), 200)]
     [ProducesResponseType(typeof(ResponseDTO), 400)]
