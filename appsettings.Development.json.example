@@ -1,0 +1,18 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "OpenAI": {
+    "ApiKey": "sk-your-openai-key-here",
+    "VectorStoreId": "vs_your-vector-store-id-here"
+  },
+  "Auth": {
+    "ValidTokens": [
+      "00000000-0000-0000-0000-000000000000"
+    ]
+  },
+  "AllowedHosts": "*"
+}
